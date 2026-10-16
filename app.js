@@ -23,9 +23,19 @@
     return true;
   }
   function answered(f){ const v=state.answers[f.id]; return Array.isArray(v)?v.length>0:(v!=null && String(v).trim()!==""); }
+  function formatProblem(f){
+    if(!answered(f)) return "";
+    const v=String(state.answers[f.id]).trim();
+    if(f.type==="email" && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) return "doesn't look like an email address";
+    if(f.type==="url" && !/^(https?:\/\/)?[^\s]+\.[^\s]{2,}$/i.test(v)) return "doesn't look like a web address";
+    if(f.type==="number" && (isNaN(Number(v)) || Number(v)<0)) return "needs to be a number, 0 or higher";
+    if(f.type==="tel" && (v.replace(/\D/g,"").length<7)) return "doesn't look like a phone number";
+    return "";
+  }
+  function ok(f){ return answered(f) && !formatProblem(f); }
   function sectionStats(sec){
     const vis=sec.fields.filter(visible);
-    return { total:vis.length, done:vis.filter(answered).length, missing:vis.filter(f=>f.required&&!answered(f)) };
+    return { total:vis.length, done:vis.filter(ok).length, missing:vis.filter(f=>(f.required&&!answered(f))||formatProblem(f)) };
   }
   function completion(){
     let t=0,d=0; SECTIONS.forEach(s=>{const st=sectionStats(s); t+=st.total; d+=st.done;});
@@ -38,20 +48,25 @@
 
   // ---------- sidebar ----------
   function renderSteps(){
-    const ol=$("steps"); ol.innerHTML="";
-    SECTIONS.forEach((s,i)=>{
-      const st=sectionStats(s);
+    const ol=$("steps");
+    if(!ol.children.length){
+      SECTIONS.forEach((s,i)=>{
+        const li=document.createElement("li");
+        li.innerHTML=`<span class="num">${s.icon}</span><span>${s.title}</span><span class="count"></span>`;
+        li.onclick=()=>go(i);
+        ol.appendChild(li);
+      });
       const li=document.createElement("li");
-      li.className=(i===state.step?"active ":"")+(st.done===st.total&&st.total>0?"done":"");
-      li.innerHTML=`<span class="num">${s.icon}</span><span>${s.title}</span><span class="count">${st.done}/${st.total}</span>`;
-      li.onclick=()=>go(i);
+      li.innerHTML=`<span class="num">✓</span><span>Review and submit</span>`;
+      li.onclick=()=>go(SECTIONS.length);
       ol.appendChild(li);
+    }
+    SECTIONS.forEach((s,i)=>{
+      const st=sectionStats(s), li=ol.children[i];
+      li.className=(i===state.step?"active ":"")+(st.done===st.total&&st.total>0?"done":"");
+      li.querySelector(".count").textContent=`${st.done}/${st.total}`;
     });
-    const li=document.createElement("li");
-    li.className=state.step===SECTIONS.length?"active":"";
-    li.innerHTML=`<span class="num">✓</span><span>Review and submit</span>`;
-    li.onclick=()=>go(SECTIONS.length);
-    ol.appendChild(li);
+    ol.children[SECTIONS.length].className=state.step===SECTIONS.length?"active":"";
   }
 
   // ---------- field rendering ----------
@@ -79,12 +94,12 @@
     wrap.addEventListener("change",e=>onInput(f,wrap,e));
     return wrap;
   }
-  function onInput(f,wrap){
+  function onInput(f,wrap,e){
     let val;
     if(f.type==="checkbox"){
       const boxes=[...wrap.querySelectorAll("input[type=checkbox]")];
       let on=boxes.filter(b=>b.checked);
-      if(f.max && on.length>f.max){ on[on.length-1].checked=false; on=boxes.filter(b=>b.checked); toast(`Pick up to ${f.max}`,true); }
+      if(f.max && on.length>f.max){ const clicked=e&&e.target&&e.target.type==="checkbox"?e.target:on[on.length-1]; clicked.checked=false; on=boxes.filter(b=>b.checked); toast(`Pick up to ${f.max}. Untick one first to change your picks.`,true); }
       boxes.forEach(b=>b.closest(".opt").classList.toggle("on",b.checked));
       val=on.map(b=>b.value);
     } else if(f.type==="radio"||f.type==="yesno"){
@@ -122,7 +137,7 @@
     $("sec-title").textContent=sec.title; $("sec-intro").textContent=sec.intro;
     const form=$("fields"); form.innerHTML="";
     sec.fields.filter(visible).forEach(f=>form.appendChild(fieldEl(f)));
-    $("sec-missing").classList.add("hidden");
+    $("sec-missing").classList.add("hidden"); delete $("sec-missing").dataset.warned;
     $("btn-prev").textContent=i===0?"Back to start":"Back";
     $("btn-next").textContent=i===SECTIONS.length-1?"Review my answers":"Save and continue";
     refreshProgress();
@@ -132,7 +147,7 @@
     if(st.missing.length){
       st.missing.forEach(f=>{ const el=$("fields").querySelector(`.field[data-id="${f.id}"]`); if(el) el.classList.add("invalid"); });
       const box=$("sec-missing"); box.classList.remove("hidden");
-      box.innerHTML=`<strong>${st.missing.length} required ${st.missing.length===1?"question":"questions"} left in this section.</strong> You can continue and come back, but we need these before you submit.<br>`+st.missing.map(f=>`<a href="#" data-j="${f.id}">${f.label}</a>`).join(" · ");
+      box.innerHTML=`<strong>${st.missing.length} ${st.missing.length===1?"question needs":"questions need"} attention in this section.</strong> You can continue and come back, but we need these fixed before you submit.<br>`+st.missing.map(f=>`<a href="#" data-j="${f.id}">${f.label}${formatProblem(f)?" ("+formatProblem(f)+")":""}</a>`).join(" · ");
       box.querySelectorAll("a").forEach(a=>a.onclick=e=>{e.preventDefault(); const el=$("fields").querySelector(`.field[data-id="${a.dataset.j}"]`); el.scrollIntoView({behavior:"smooth",block:"center"});});
       if(!box.dataset.warned){ box.dataset.warned="1"; box.scrollIntoView({behavior:"smooth",block:"center"}); return; }
     }
@@ -158,7 +173,7 @@
     const box=$("review-missing");
     if(missing.length){
       box.classList.remove("hidden");
-      box.innerHTML=`<strong>${missing.length} required ${missing.length===1?"question is":"questions are"} still blank.</strong> Please fill these in before submitting:<br>`+missing.map(m=>`<a href="#" data-s="${m.sec}">${SECTIONS[m.sec].title}: ${m.f.label}</a>`).join("<br>");
+      box.innerHTML=`<strong>${missing.length} ${missing.length===1?"question needs":"questions need"} attention.</strong> Please fix these before submitting:<br>`+missing.map(m=>`<a href="#" data-s="${m.sec}">${SECTIONS[m.sec].title}: ${m.f.label}${formatProblem(m.f)?" ("+formatProblem(m.f)+")":""}</a>`).join("<br>");
       box.querySelectorAll("a").forEach(a=>a.onclick=e=>{e.preventDefault(); go(+a.dataset.s);});
       $("btn-submit").disabled=true; $("btn-submit").textContent="Finish required questions first";
     } else { box.classList.add("hidden"); $("btn-submit").disabled=false; $("btn-submit").textContent="Submit my answers"; }

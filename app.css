@@ -63,7 +63,7 @@ h1{margin:0 0 12px;font-size:32px;line-height:1.15;color:var(--navy);font-weight
 .opt span{line-height:1.35}
 .counter{font-size:12px;color:var(--slate);text-align:right}
 
-.missing{margin-top:24px;padding:14px 18px;background:#fdf3f2;border-left:3px solid var(--err);color:#7a1b15;font-size:15px}
+.missing{overflow-wrap:anywhere;margin-top:24px;padding:14px 18px;background:#fdf3f2;border-left:3px solid var(--err);color:#7a1b15;font-size:15px}
 .missing a{color:#7a1b15;font-weight:600}
 
 .nav{display:flex;justify-content:space-between;gap:12px;margin-top:20px}
@@ -83,8 +83,8 @@ h1{margin:0 0 12px;font-size:32px;line-height:1.15;color:var(--navy);font-weight
 .review{display:grid;gap:28px;margin-top:12px}
 .review h2{margin:0 0 10px;font-size:20px;color:var(--navy);border-bottom:2px solid var(--navy);padding-bottom:6px;cursor:pointer}
 .review h2:hover{color:var(--teal)}
-.review table{width:100%;border-collapse:collapse;font-size:15px}
-.review td{padding:8px 10px;border:1px solid var(--line);vertical-align:top}
+.review table{width:100%;border-collapse:collapse;font-size:15px;table-layout:fixed}
+.review td{padding:8px 10px;border:1px solid var(--line);vertical-align:top;overflow-wrap:anywhere}
 .review td:first-child{width:38%;font-weight:600;color:var(--navy);background:#fafbfc}
 .review td.empty{color:var(--slate);font-style:italic}
 
@@ -103,6 +103,8 @@ h1{margin:0 0 12px;font-size:32px;line-height:1.15;color:var(--navy);font-weight
   .steps .count{display:none}
   .sidebar-foot{flex-direction:row;justify-content:space-between}
   .card{padding:24px 18px}
+  .review td:first-child{width:42%}
+  .review td{padding:6px 8px;font-size:14px}
   h1{font-size:26px}
   .brand-title{display:none}
   .topbar-inner{padding:10px 14px}
