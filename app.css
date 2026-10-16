@@ -20,7 +20,8 @@ button,input,select,textarea{font:inherit;color:inherit}
 .progress{height:4px;background:var(--navy-deep)}
 .progress-bar{height:100%;background:var(--teal);transition:width .4s ease}
 
-.layout{max-width:1240px;margin:0 auto;padding:32px 24px 64px;display:grid;grid-template-columns:280px 1fr;gap:32px;align-items:start}
+.layout{max-width:1240px;margin:0 auto;padding:32px 24px 64px;display:grid;grid-template-columns:280px minmax(0,1fr);gap:32px;align-items:start}
+.sidebar,.content{min-width:0}
 .sidebar{position:sticky;top:76px;background:var(--card);border:1px solid var(--line)}
 .sidebar-head{padding:22px 22px 14px;border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:8px}
 .pct{font-size:40px;font-weight:700;color:var(--navy);line-height:1}
@@ -92,9 +93,11 @@ h1{margin:0 0 12px;font-size:32px;line-height:1.15;color:var(--navy);font-weight
 .footer{text-align:center;color:var(--muted);font-size:13px;padding:0 24px 40px}
 
 @media (max-width:900px){
-  .layout{grid-template-columns:1fr;padding:16px 14px 48px;gap:16px}
+  body{overflow-x:hidden}
+  .topbar .btn-ghost{padding:8px 12px;font-size:13px;white-space:nowrap}
+  .layout{grid-template-columns:minmax(0,1fr);padding:16px 14px 48px;gap:16px}
   .sidebar{position:static}
-  .steps{display:flex;overflow-x:auto;padding:8px}
+  .steps{display:flex;overflow-x:auto;padding:8px;-webkit-overflow-scrolling:touch}
   .steps li{flex:none;border-left:0;border-bottom:3px solid transparent;padding:8px 12px}
   .steps li.active{border-bottom-color:var(--teal)}
   .steps .count{display:none}
