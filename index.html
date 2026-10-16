@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agent Website Questionnaire | Wallace Real Estate</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Everything we need from you to build your agent website.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="./">
+      <img src="https://images-static.moxiworks.com/static/images/br/WallaceTN_20813602/Wallace_Corporate_Horizontal_Light.png" alt="Wallace Real Estate" height="34">
+      <span class="brand-sep"></span>
+      <span class="brand-title">Agent Website Questionnaire</span>
+    </a>
+    <div class="topbar-right">
+      <span id="save-state" class="save-state">Answers save automatically</span>
+      <button id="btn-draft" class="btn btn-ghost" type="button" title="Send Howard what you have so far. You can keep going after.">Send progress to Howard</button>
+    </div>
+  </div>
+  <div class="progress"><div id="progress-bar" class="progress-bar" style="width:0%"></div></div>
+</header>
+
+<main class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-head">
+      <div class="pct"><span id="pct">0</span>%</div>
+      <div class="pct-label">complete</div>
+    </div>
+    <ol id="steps" class="steps"></ol>
+    <div class="sidebar-foot">
+      <button id="btn-download" class="link-btn" type="button">Download my answers</button>
+      <button id="btn-reset" class="link-btn danger" type="button">Start over</button>
+    </div>
+  </aside>
+
+  <section class="content">
+    <div id="welcome" class="card welcome">
+      <p class="eyebrow">Before we build</p>
+      <h1>Let's build a website that actually brings you business.</h1>
+      <p class="lead">We gave WallaceTN.com a page for every place and every service, with real local answers on each one. To do the same for you, we need a lot from you up front. This questionnaire is long on purpose. Plan on 45 to 60 minutes, or do it in pieces.</p>
+      <ul class="welcome-list">
+        <li><strong>It saves as you go.</strong> Close the tab, come back on the same device and browser, and everything is still here.</li>
+        <li><strong>Skip what you don't know.</strong> Required questions are marked. Everything else is optional but helps.</li>
+        <li><strong>Talk like you talk.</strong> Long, honest answers beat short tidy ones. No one grades your grammar.</li>
+        <li><strong>Never type a password here.</strong> If we need a login we will ask you separately in a secure way.</li>
+      </ul>
+      <div id="resume-note" class="resume-note hidden">Welcome back. We found your saved answers. Pick up where you left off.</div>
+      <button id="btn-start" class="btn btn-primary" type="button">Start the questionnaire</button>
+    </div>
+
+    <div id="section-view" class="hidden">
+      <div class="card">
+        <p class="eyebrow"><span id="sec-num"></span> of <span id="sec-total"></span></p>
+        <h1 id="sec-title"></h1>
+        <p id="sec-intro" class="lead"></p>
+        <form id="fields" class="fields" novalidate autocomplete="on"></form>
+        <div id="sec-missing" class="missing hidden"></div>
+      </div>
+      <div class="nav">
+        <button id="btn-prev" class="btn btn-ghost" type="button">Back</button>
+        <button id="btn-next" class="btn btn-primary" type="button">Save and continue</button>
+      </div>
+    </div>
+
+    <div id="review-view" class="hidden">
+      <div class="card">
+        <p class="eyebrow">Last step</p>
+        <h1>Review and submit</h1>
+        <p class="lead">Look everything over. Click any section title to go back and change an answer. When you're happy, hit Submit and Howard's team gets everything.</p>
+        <div id="review-missing" class="missing hidden"></div>
+        <div id="review-list" class="review"></div>
+      </div>
+      <div class="nav">
+        <button id="btn-review-back" class="btn btn-ghost" type="button">Back</button>
+        <button id="btn-submit" class="btn btn-primary btn-lg" type="button">Submit my answers</button>
+      </div>
+    </div>
+
+    <div id="done-view" class="card hidden">
+      <p class="eyebrow">Received</p>
+      <h1>Thank you. We have your answers.</h1>
+      <p class="lead">Howard's team got a copy by email and it's saved on our side. Next step: we'll read through everything and set up a short call to go over your story and any open questions.</p>
+      <p class="lead">Want a copy for yourself? <button id="btn-download-2" class="link-btn inline" type="button">Download your answers</button>.</p>
+      <p class="small">Need to change something? Your answers are still saved on this device. <button id="btn-edit-again" class="link-btn inline" type="button">Go back and edit</button>, then submit again. We'll use the newest version.</p>
+    </div>
+  </section>
+</main>
+
+<div id="toast" class="toast hidden"></div>
+
+<footer class="footer">Wallace Real Estate · Serving East Tennessee since 1936 · Your answers go only to Howard's web team.</footer>
+
+<script src="questions.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
